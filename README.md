@@ -116,182 +116,185 @@ From repo root:
 - Server: `http://localhost:8787`
 - Web: `http://localhost:5173` (proxies `/api` to the server)
 
-We are going to create a demo project to have a real subject for our ci
+We are going to create a demo project to have a real subject for our CI.
 
 ### Technical task for the demo project
 
-Technical Specification (English)
+#### Technical Specification (English)
 
-1. Project Goal
-   • Build a realistic but lightweight client–server TypeScript project to run future CI/benchmark experiments (install/build/test/e2e).
-   • Support 3 data behaviors (no sync / full sync / pull only) inside one app.
-   • Provide a deterministic demo mode with predictable initial data (for e2e and local demos).
+1. **Project Goal**
+   - Build a realistic but lightweight client–server TypeScript project to run future CI/benchmark experiments (install/build/test/e2e).
+   - Support 3 data behaviors (no sync / full sync / pull only) inside one app.
+   - Provide a deterministic demo mode with predictable initial data (for e2e and local demos).
 
-⸻
+---
 
-2. Repository Structure
-   • Root repository contains:
-   • /server — backend (TypeScript).
-   • /ui/web — frontend (React + TypeScript).
-   • (reserved) /ui/tui — later, not now, but do not block future addition.
-   • Shared root files:
-   • .editorconfig, .gitignore, README.md
-   • shared lint/format setup (e.g. ESLint + Prettier) reusable by both apps.
-   • Package manager/runtime should be chosen to keep CI experiments easy (no unnecessary complexity).
+2. **Repository Structure**
+   - Root repository contains:
+     - `/server` — backend (TypeScript).
+     - `/ui/web` — frontend (React + TypeScript).
+     - (reserved) `/ui/tui` — later, not now, but do not block future addition.
+   - Shared root files:
+     - `.editorconfig`, `.gitignore`, `README.md`
+   - Shared lint/format setup (e.g. ESLint + Prettier) reusable by both apps.
+   - Package manager/runtime should be chosen to keep CI experiments easy (no unnecessary complexity).
 
-⸻
+---
 
-3. Tech Stack
+3. **Tech Stack**
 
-Frontend (ui/web)
-• Vite + React + TypeScript
-• TailwindCSS
-• shadcn/ui
-• Themes: light/dark + default “system”
-• Mobile-first + responsive sidebar behavior
+   **Frontend (`ui/web`)**
+   - Vite + React + TypeScript
+   - TailwindCSS
+   - shadcn/ui
+   - Themes: light/dark + default “system”
+   - Mobile-first + responsive sidebar behavior
 
-Backend (server)
-• TypeScript HTTP server (any minimal framework is fine; prioritize simplicity/predictability)
-• API endpoints required by Replicache (pull/push; auth/tenant can be simplified)
+   **Backend (`server`)**
+   - TypeScript HTTP server (any minimal framework is fine; prioritize simplicity/predictability)
+   - API endpoints required by Replicache (pull/push; auth/tenant can be simplified)
 
-Sync
-• Replicache as the primary client–server sync mechanism.
+   **Sync**
+   - Replicache as the primary client–server sync mechanism.
 
-⸻
+---
 
-4. Domain Model
-   • Project
-   • id: string
-   • name: string
-   • Todo
-   • id: string
-   • projectId: string
-   • text: string
-   • completed: boolean
-   • createdAt: number (timestamp)
-   • updatedAt: number (timestamp)
-   • optional: author: "client" | "bot" (useful for debugging/demo)
+4. **Domain Model**
+   - **Project**
+     - `id`: string
+     - `name`: string
+   - **Todo**
+     - `id`: string
+     - `projectId`: string
+     - `text`: string
+     - `completed`: boolean
+     - `createdAt`: number (timestamp)
+     - `updatedAt`: number (timestamp)
+     - Optional: `author`: `"client"` | `"bot"` (useful for debugging/demo)
 
-⸻
+---
 
-5. UI/UX Requirements
+5. **UI/UX Requirements**
 
-Layout
-• Left sidebar + main content area.
-• Mobile-first behavior:
-• Desktop: sidebar open by default.
-• Mobile: sidebar collapsed by default and opens as a sliding drawer.
-• Sidebar content (top → bottom): 1. Theme toggle: System / Light / Dark (default System) 2. Menu: list of projects 3. Button: “Create project”
-• Main content:
-• Current project title
-• Todo list (create/delete/edit/toggle completed)
-• States: loading / empty / error
-• “Professional, pleasant UI”:
-• clean spacing/typography, proper hover/focus states
-• smooth animations (sidebar open/close, todo add/remove, theme switching)
-• Prefer shadcn/ui components (Button, Input, Dialog/Drawer, Dropdown, Toast, etc.)
+   **Layout**
+   - Left sidebar + main content area.
+   - Mobile-first behavior:
+     - Desktop: sidebar open by default.
+     - Mobile: sidebar collapsed by default and opens as a sliding drawer.
+   - Sidebar content (top → bottom):
+     1. Theme toggle: System / Light / Dark (default System)
+     2. Menu: list of projects
+     3. Button: “Create project”
+   - Main content:
+     - Current project title
+     - Todo list (create/delete/edit/toggle completed)
+     - States: loading / empty / error
+   - “Professional, pleasant UI”:
+     - Clean spacing/typography, proper hover/focus states
+     - Smooth animations (sidebar open/close, todo add/remove, theme switching)
+     - Prefer shadcn/ui components (Button, Input, Dialog/Drawer, Dropdown, Toast, etc.)
 
-⸻
+---
 
-6. Modes (3 Projects in Demo Mode)
+6. **Modes (3 Projects in Demo Mode)**
 
-In demo mode the app starts with 3 projects and prefilled data.
+   In demo mode the app starts with 3 projects and prefilled data.
 
-Project 1: “TodoList - no sync”
-• Client loads a prefilled local Todo list on startup (frontend seed).
-• User can:
-• add/delete/edit todos
-• toggle completed
-• No server synchronization.
-• State can live in client store; optional persistence (indexeddb/localStorage) but not required.
+   **Project 1: “TodoList - no sync”**
+   - Client loads a prefilled local Todo list on startup (frontend seed).
+   - User can:
+     - add/delete/edit todos
+     - toggle completed
+   - No server synchronization.
+   - State can live in client store; optional persistence (indexeddb/localStorage) but not required.
 
-Project 2: “TodoList - full-sync”
-• Full client–server sync via Replicache:
-• client changes go to server (push)
-• client receives server changes (pull)
-• A server-side bot runs:
-• every 5 seconds, performs one action on “its” todos:
-• create a todo, or
-• delete its todo, or
-• toggle completed on a random todo
-• Bot changes must appear on the client (via pull).
+   **Project 2: “TodoList - full-sync”**
+   - Full client–server sync via Replicache:
+     - client changes go to server (push)
+     - client receives server changes (pull)
+   - A server-side bot runs:
+     - every 5 seconds, performs one action on “its” todos:
+       - create a todo, or
+       - delete its todo, or
+       - toggle completed on a random todo
+   - Bot changes must appear on the client (via pull).
 
-Project 3: “Todo - pull only”
-• Client can create/edit todos locally, but does not push changes to the server (push disabled/ignored).
-• Client still pulls updates from the server.
-• A server-side bot runs:
-• every 2 seconds, performs an action on the todos it can access:
-• create / delete / edit text / toggle completed
-• Client must see server changes, while local user changes remain local and do not affect the server.
+   **Project 3: “Todo - pull only”**
+   - Client can create/edit todos locally, but does not push changes to the server (push disabled/ignored).
+   - Client still pulls updates from the server.
+   - A server-side bot runs:
+     - every 2 seconds, performs an action on the todos it can access:
+       - create / delete / edit text / toggle completed
+   - Client must see server changes, while local user changes remain local and do not affect the server.
 
-⸻
+---
 
-7. Demo Mode
-   • The app must support starting everything in demo mode via a single command.
-   • In demo mode:
-   • server + client run in compatible configuration
-   • exactly 3 projects are created
-   • each project’s initial todos are deterministic (fixed seed)
-   • Demo mode must be stable for e2e:
-   • same initial data each run
-   • bots run on schedules (2s/5s)
-   • ideally allow “freeze bots” via an env flag (optional but useful for tests)
+7. **Demo Mode**
+   - The app must support starting everything in demo mode via a single command.
+   - In demo mode:
+     - server + client run in compatible configuration
+     - exactly 3 projects are created
+     - each project’s initial todos are deterministic (fixed seed)
+   - Demo mode must be stable for e2e:
+     - same initial data each run
+     - bots run on schedules (2s/5s)
+     - ideally allow “freeze bots” via an env flag (optional but useful for tests)
 
-⸻
+---
 
-8. Backend Requirements (Minimal)
-   • Replicache endpoints:
-   • POST /api/replicache/push
-   • POST /api/replicache/pull
-   • Storage:
-   • in-memory is acceptable initially (keep it simple)
-   • but design with an interface to later swap in SQLite/Postgres (optional now)
-   • Bots:
-   • Bot A for full-sync (5s)
-   • Bot B for pull-only (2s)
-   • Server must:
-   • create initial seed for demo mode
-   • return correct data via pull
+8. **Backend Requirements (Minimal)**
+   - Replicache endpoints:
+     - POST `/api/replicache/push`
+     - POST `/api/replicache/pull`
+   - Storage:
+     - in-memory is acceptable initially (keep it simple)
+     - but design with an interface to later swap in SQLite/Postgres (optional now)
+   - Bots:
+     - Bot A for full-sync (5s)
+     - Bot B for pull-only (2s)
+   - Server must:
+     - create initial seed for demo mode
+     - return correct data via pull
 
-⸻
+---
 
-9. Client Sync Requirements (Replicache)
-   • Client:
-   • create Replicache instance and bind it to the current project
-   • subscribe/query Todos per project
-   • Per mode behavior:
-   • no sync: Replicache not used, or used locally with no network calls (either is fine as long as behavior matches)
-   • full-sync: push + pull enabled
-   • pull-only: push disabled/stubbed, pull enabled
+9. **Client Sync Requirements (Replicache)**
+   - Client:
+     - create Replicache instance and bind it to the current project
+     - subscribe/query Todos per project
+   - Per mode behavior:
+     - no sync: Replicache not used, or used locally with no network calls (either is fine as long as behavior matches)
+     - full-sync: push + pull enabled
+     - pull-only: push disabled/stubbed, pull enabled
 
-⸻
+---
 
-10. Development Commands (Minimum)
-    • dev — run server + ui/web together
-    • dev:server — server only
-    • dev:web — web only
-    • build — build everything
-    • test — unit tests (can be minimal/empty at first, but the command must exist)
-    • lint / format — basic checks
+10. **Development Commands (Minimum)**
+    - dev — run server + ui/web together
+    - dev:server — server only
+    - dev:web — web only
+    - build — build everything
+    - test — unit tests (can be minimal/empty at first, but the command must exist)
+    - lint / format — basic checks
 
-⸻
+---
 
-11. E2E Foundation (Plan Ahead)
-    • Demo mode is the default for e2e tests.
-    • Add stable selectors (e.g. data-testid) for:
-    • project list
-    • create project button
-    • add todo input
-    • todo item (text, checkbox, delete)
-    • Sync errors should be visible in the UI (toast/alert) so e2e can detect them.
+11. **E2E Foundation (Plan Ahead)**
+    - Demo mode is the default for e2e tests.
+    - Add stable selectors (e.g. `data-testid`) for:
+      - project list
+      - create project button
+      - add todo input
+      - todo item (text, checkbox, delete)
+    - Sync errors should be visible in the UI (toast/alert) so e2e can detect them.
 
-⸻
+---
 
-12. Definition of Done
-    • Repo with /server and /ui/web exists and runs locally.
-    • Demo mode shows 3 projects with correct names.
-    • Sidebar + theme toggle work; responsive behavior is correct (desktop open, mobile drawer).
-    • Project 1 edits are local and not synced.
-    • Project 2 is synced; bot modifies data every 5s; client sees updates.
-    • Project 3 local edits do not push to server; server bot updates are pulled every 2s.
-    • UI looks clean and includes basic animations (sidebar, list transitions).
+12. **Definition of Done**
+    - Repo with `/server` and `/ui/web` exists and runs locally.
+    - Demo mode shows 3 projects with correct names.
+    - Sidebar + theme toggle work; responsive behavior is correct (desktop open, mobile drawer).
+    - Project 1 edits are local and not synced.
+    - Project 2 is synced; bot modifies data every 5s; client sees updates.
+    - Project 3 local edits do not push to server; server bot updates are pulled every 2s.
+    - UI looks clean and includes basic animations (sidebar, list transitions).
