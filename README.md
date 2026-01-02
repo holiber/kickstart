@@ -9,7 +9,9 @@ Below is the table of features we plan to integrate. Each feature has a Tier num
 - **Tier 1:** Immediate wins—low maintenance and broadly reusable across backend/API/web/CLI.
 - **Tier 2:** Still common, but requires a bit more wiring and baseline setup.
 - **Tier 3:** Significant engineering effort; worth it if you’ll reuse it across many repos.
-- **Tier 4:** Ambitious/experimental—higher upkeep, more brittle, or niche.| Id | Category | Description | Tools | Tier |
+- **Tier 4:** Ambitious/experimental—higher upkeep, more brittle, or niche.
+  
+| Id | Category | Description | Tools | Tier |
 |---|---|---|---|---|
 | ci-lint-format-typecheck | 🧹 Code Quality | **Quality gates (lint/format/typecheck)** — fast checks that fail PRs early | ESLint, Prettier, TypeScript `tsc`, (optional) Biome, GitHub Actions | 🟢 Tier 1 |
 | ci-test-run | 🧪 Testing | **Test execution in CI** — run unit/integration tests reliably | Vitest/Jest, Node test runner, GitHub Actions | 🟢 Tier 1 |
