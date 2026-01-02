@@ -3,11 +3,10 @@
 The purpose of this project is to provide super a template with super comperhansive UI with free tools and without sharing your (maby private) code with third parties except github 🕵️
 There is the tabel of features we are going to try to integrade. Each feature have a Tier number from 1 to 4.
 
-  1.	Tier1 “Foundation CI” (quality + tests + coverage + artifacts + caching)
-	2.	Tier1/2 “Build & bundle budgets”
-	3.	Tier2 “E2E + visual + replay basics”
-	4.	Tier2 “Metrics history + dashboard + badges”
-	5.	Tier3/4 “Advanced perf + AI evaluation harness”
+- Tier 1: immediate wins, low maintenance, broadly reusable across backend/api/web/cli.
+- Tier 2: still common, but needs a bit more wiring + baselines.
+- Tier 3: real engineering effort; worth it if you’ll reuse across many repos.
+- Tier 4: “ambitious/experimental”: higher upkeep, more brittle, or niche.
 
 | Id | Category | Description | Tools | Tier |
 |---|---|---|---|---|
