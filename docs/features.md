@@ -1,6 +1,6 @@
 # Features
 
-This repository uses a simple feature-flag system to enable/disable CI capabilities without editing workflow files.
+This repo uses a small feature flag system to enable/disable automation features without editing workflows. Flags live in `.github/template.config.json` under the `features` key.
 
 ## How to toggle a feature
 
@@ -16,16 +16,15 @@ Edit `.github/template.config.json`:
 
 ## `ci-lint-format-typecheck`
 
-**Goal**: fast PR quality gates (lint / format check / TypeScript typecheck).
+Adds a fast PR quality gate that runs:
 
-**When enabled**: GitHub Actions runs a `quality` job that executes:
+- ESLint (`npm run lint`)
+- Prettier check (`npm run format:check`)
+- TypeScript typecheck (`npm run typecheck`)
 
-- `npm ci`
-- `npm run lint`
-- `npm run format:check`
-- `npm run typecheck`
+### Toggle
 
-**How to enable/disable**: set:
+Edit `.github/template.config.json`:
 
 ```json
 {
@@ -35,7 +34,9 @@ Edit `.github/template.config.json`:
 }
 ```
 
-**Run locally**:
+Set `"enabled": false` to skip the GitHub Actions `quality` job.
+
+### Run locally
 
 ```bash
 npm ci

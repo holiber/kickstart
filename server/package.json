@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "start": "node dist/index.js",
-    "test": "node -e \"console.log('server tests: (none yet)')\"",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "test": "node -e \"console.log('server tests: (none yet)')\""
   },
   "dependencies": {
     "@fastify/cors": "^9.0.1",
