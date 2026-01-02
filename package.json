@@ -16,7 +16,8 @@
     "e2e:human": "HUMAN_LIKE=1 playwright test",
     "lint": "eslint .",
     "format": "prettier -w .",
-    "format:check": "prettier -c ."
+    "format:check": "prettier -c .",
+    "typecheck": "npm --workspaces run typecheck"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
