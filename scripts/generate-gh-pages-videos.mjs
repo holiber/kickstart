@@ -45,9 +45,9 @@ async function main() {
 
   await fs.mkdir(docsDir, { recursive: true });
   await fs.writeFile(outPath, `${JSON.stringify({ videos }, null, 2)}\n`, 'utf8');
-  // eslint-disable-next-line no-console
-  console.log(`Wrote ${videos.length} video paths to ${toPosixPath(path.relative(repoRoot, outPath))}`);
+  console.log(
+    `Wrote ${videos.length} video paths to ${toPosixPath(path.relative(repoRoot, outPath))}`,
+  );
 }
 
 await main();
-

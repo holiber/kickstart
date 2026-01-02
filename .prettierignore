@@ -3,3 +3,7 @@ dist
 package-lock.json
 ui/web/package-lock.json
 server/package-lock.json
+
+# Built GH Pages preview output (generated artifacts).
+docs/**
+!docs/features.md
