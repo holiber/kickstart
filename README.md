@@ -20,6 +20,8 @@ Below is the table of features we plan to integrate. Each feature has a Tier num
 | ci-coverage | 🧪 Testing | **Code coverage reporting** — line/branch/function + PR delta | `c8`/Istanbul/nyc, lcov + report action, PR comment/check | 🟢 Tier 1 |
 | ci-coverage-gate | 🧪 Testing | **Coverage gate (diff/threshold)** — enforce minimums | `c8` + custom diff logic, lcov diff tooling | 🟡 Tier 2 |
 | ci-artifacts-bundle | 🔎 Observability | **Unified CI artifacts bundle** — pack logs/reports/screenshots | GitHub Actions artifacts, structured folders, zip step | 🟢 Tier 1 |
+| ci-summary-rich | 🔎 Observability | **Rich CI summary for mobile review** — single GitHub Actions summary with key links + inline highlights | GH Actions Job Summary (`GITHUB_STEP_SUMMARY`), Markdown generation script | 🟢 Tier 1 |
+| artifact-index-html | 🔎 Observability | **Artifact index page** — generate `index.html` that links screenshots/videos/traces/logs for one-tap review | Static HTML generator + upload as artifact (or publish to GH Pages) | 🟢 Tier 1 |
 | ci-cache | ⚙️ CI | **CI caching** — speed up installs/builds/tests | `actions/cache`, pnpm/yarn/npm cache, build caches | 🟢 Tier 1 |
 | ci-workflow-timings | ⚙️ CI | **CI step timing observability** — know what’s slow in pipeline | GH Actions timings + custom summary, `act` locally | 🟡 Tier 2 |
 | ci-nightly-full-suite | ⚙️ CI | **Nightly full suite** — heavy checks run on schedule | GitHub scheduled workflows | 🟡 Tier 2 |
@@ -44,18 +46,19 @@ Below is the table of features we plan to integrate. Each feature has a Tier num
 | cpu-profile-capture | ⚡️ Performance | **CPU profiling on demand** — flamegraphs for regressions | `node --prof`, `0x`, `clinic flame`, pprof | 🟠 Tier 3 |
 | memory-snapshots | ⚡️ Performance | **Memory snapshots / leak hints** | heap snapshots, `clinic heapprofiler`, `--inspect` | 🟠 Tier 3 |
 | e2e-framework | 🧭 E2E | **E2E test framework** — browser automation | Playwright (recommended), optional WebdriverIO | 🟢 Tier 1 |
-| e2e-artifacts | 🧭 E2E | **E2E artifacts (trace/video/screenshots)** | Playwright trace viewer, videos/screenshots as artifacts | 🟢 Tier 1 |
-| visual-regression | 🎨 Visual | **Visual regression testing** — screenshot comparisons | Playwright `toHaveScreenshot`, optional Storybook snapshots | 🟡 Tier 2 |
+| e2e-artifacts | 🧭 E2E | **E2E artifacts (trace/video/screenshots)** — always upload for quick review | Playwright trace viewer, videos/screenshots as artifacts | 🟢 Tier 1 |
+| e2e-demo-flow-video | 🧭 E2E | **Recorded demo smoke flows** — scripted “happy paths” that always produce video/screenshots (ideal for mobile review) | Playwright projects, deterministic test data/demo mode, artifacts | 🟢 Tier 1 |
+| visual-regression | 🎨 Visual | **Visual regression testing** — screenshot comparisons on critical flows | Playwright `toHaveScreenshot`, optional Storybook snapshots | 🟢 Tier 1 |
 | golden-update-flow | 🎨 Visual | **Golden/baseline update workflow** — accept new snapshots fast | Playwright update snapshots, PR with snapshot diffs, artifacts | 🟡 Tier 2 |
 | visual-diff-viewer | 🎨 Visual | **Visual diff visualization** — easy review of diffs | Playwright HTML report, custom GH Pages gallery | 🟠 Tier 3 |
-| browser-console-logs | 🔎 Observability | **Browser console log capture** — console errors/warns saved | Playwright listeners + artifact logs | 🟡 Tier 2 |
+| browser-console-logs | 🔎 Observability | **Browser console log capture** — console errors/warns saved | Playwright listeners + artifact logs | 🟢 Tier 1 |
 | network-capture | 🔎 Observability | **Network capture (HAR/requests)** — record requests for debugging | Playwright HAR, tracing, custom network logs | 🟠 Tier 3 |
-| failed-page-snapshot | 🧭 E2E | **Failure snapshot pack** — screenshot + DOM snapshot on fail | Playwright screenshot + DOM dump + trace | 🟡 Tier 2 |
-| deterministic-replay | 🧭 E2E | **Deterministic replay with mocked API** — re-run UI actions w/ same API | Playwright route mocking, HAR replay, MSW, local stubs | 🟠 Tier 3 |
-| human-like-e2e | 🧭 E2E | **Human-like interaction simulation** — delays, smooth mouse, type-by-type | Playwright scripted “humanizer” layer | 🔴 Tier 4 |
-| ui-smoothness-telemetry | ⚡️ Performance | **UI smoothness telemetry during E2E** — long tasks/FPS-ish signals | PerformanceObserver, tracing, Chrome DevTools Protocol | 🔴 Tier 4 |
+| failed-page-snapshot | 🧭 E2E | **Failure snapshot pack** — screenshot + DOM snapshot + trace on fail | Playwright screenshot + DOM dump + trace | 🟢 Tier 1 |
+| deterministic-replay | 🧭 E2E | **Deterministic replay with mocked API** — re-run UI actions w/ same API responses | Playwright route mocking, HAR replay, MSW, local stubs | 🟠 Tier 3 |
+| human-like-e2e | 🧭 E2E | **Human-like interaction simulation** — delays, smooth mouse, type-by-type (brittle) | Playwright scripted “humanizer” layer | 🔴 Tier 4 |
+| ui-smoothness-telemetry | ⚡️ Performance | **UI smoothness telemetry during E2E** — long tasks/FPS-ish signals (advanced) | PerformanceObserver, tracing, Chrome DevTools Protocol | 🔴 Tier 4 |
 | tui-testing | 🖥️ CLI/TUI | **TUI golden testing (video/snapshots)** | `charmbracelet/vhs`, `asciinema`, snapshot text diffs | 🟠 Tier 3 |
-| tui-replay | 🖥️ CLI/TUI | **TUI interaction replay** — scripted inputs + deterministic output | `expect`, pty harness, VHS tapes | 🔴 Tier 4 |
+| tui-replay | 🖥️ CLI/TUI | **TUI interaction replay** — scripted inputs + deterministic output (hard) | `expect`, pty harness, VHS tapes | 🔴 Tier 4 |
 | logs-into-artifacts | 🔎 Observability | **Console/test log collection** — standardize logs to artifacts | GH Actions artifacts, structured logs, log scrubbing | 🟢 Tier 1 |
 | metrics-history | 📈 Metrics | **Metrics history (time series)** — store results per commit | `github-action-benchmark`, JSON in `gh-pages` or repo branch | 🟡 Tier 2 |
 | pr-baseline-compare | 📈 Metrics | **PR vs baseline comparison** — show deltas in PR | custom scripts, GH Checks / PR comments | 🟡 Tier 2 |
@@ -66,7 +69,7 @@ Below is the table of features we plan to integrate. Each feature has a Tier num
 | versioning-strategy | 🧩 Monorepo | **Versioning strategy for monorepo/workspace** | Changesets, semantic-release (self-contained), pnpm workspaces | 🟡 Tier 2 |
 | monorepo-task-runner | 🧩 Monorepo | **Monorepo task orchestration** — affected-only builds/tests | Turborepo / Nx (optional), pnpm workspaces | 🟠 Tier 3 |
 | test-selection | ⚙️ CI | **Test selection (affected-only)** — run only impacted tests | Nx/Turbo affected, custom git diff mapping | 🟠 Tier 3 |
-| preview-envs | 🚚 Delivery | **PR preview deployments** — ephemeral env per PR | GitHub Pages (static) / external hosting (optional) | 🔴 Tier 4 |
+| preview-envs | 🚚 Delivery | **PR preview deployments** — ephemeral env per PR (often external) | GitHub Pages (static) / external hosting (optional) | 🔴 Tier 4 |
 | e2e-against-preview | 🚚 Delivery | **E2E against preview URL** | Playwright against deployed preview | 🔴 Tier 4 |
 | docs-site | 📚 Docs | **Docs site generation/publish** | Docusaurus/Typedoc + GH Pages | 🟠 Tier 3 |
 | adr-template | 📚 Docs | **Architecture Decision Records (ADR)** | Markdown template + index generator | 🟡 Tier 2 |
