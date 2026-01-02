@@ -1,0 +1,25 @@
+{
+  "features": {
+    "ci-lint-format-typecheck": { "enabled": true },
+    "ci-test-run": { "enabled": true },
+    "ci-test-reporter": { "enabled": true },
+    "ci-test-metrics": { "enabled": true },
+    "ci-coverage": { "enabled": true },
+    "ci-artifacts-bundle": { "enabled": true },
+    "ci-summary-rich": { "enabled": true },
+    "artifact-index-html": { "enabled": true },
+    "ci-cache": { "enabled": true },
+    "deps-auto-update": { "enabled": true },
+    "bundle-size-tracking": { "enabled": true },
+    "bundle-size-budget": { "enabled": true },
+    "build-cold-time": { "enabled": true },
+    "e2e-framework": { "enabled": true },
+    "e2e-artifacts": { "enabled": true },
+    "e2e-demo-flow-video": { "enabled": true },
+    "visual-regression": { "enabled": true },
+    "browser-console-logs": { "enabled": true },
+    "failed-page-snapshot": { "enabled": true },
+    "logs-into-artifacts": { "enabled": true },
+    "changelog-automation": { "enabled": true }
+  }
+}
