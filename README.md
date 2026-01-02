@@ -2,15 +2,14 @@
 
 # The Kikstart template 🚀
 
-The purpose of this project is to provide super a template with super comperhansive UI with free tools and without sharing your (maby private) code with third parties except github 🕵️
-There is the tabel of features we are going to try to integrade. Each feature have a Tier number from 1 to 4.
+The purpose of this project is to provide a template with a comprehensive UI, using free tools and without sharing your (potentially private) code with third parties—except GitHub 🕵️
 
-- Tier 1: immediate wins, low maintenance, broadly reusable across backend/api/web/cli.
-- Tier 2: still common, but needs a bit more wiring + baselines.
-- Tier 3: real engineering effort; worth it if you’ll reuse across many repos.
-- Tier 4: “ambitious/experimental”: higher upkeep, more brittle, or niche.
+Below is the table of features we plan to integrate. Each feature has a Tier number from 1 to 4:
 
-| Id | Category | Description | Tools | Tier |
+- **Tier 1:** Immediate wins—low maintenance and broadly reusable across backend/API/web/CLI.
+- **Tier 2:** Still common, but requires a bit more wiring and baseline setup.
+- **Tier 3:** Significant engineering effort; worth it if you’ll reuse it across many repos.
+- **Tier 4:** Ambitious/experimental—higher upkeep, more brittle, or niche.| Id | Category | Description | Tools | Tier |
 |---|---|---|---|---|
 | ci-lint-format-typecheck | 🧹 Code Quality | **Quality gates (lint/format/typecheck)** — fast checks that fail PRs early | ESLint, Prettier, TypeScript `tsc`, (optional) Biome, GitHub Actions | 🟢 Tier 1 |
 | ci-test-run | 🧪 Testing | **Test execution in CI** — run unit/integration tests reliably | Vitest/Jest, Node test runner, GitHub Actions | 🟢 Tier 1 |
