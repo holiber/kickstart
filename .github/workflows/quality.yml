@@ -8,6 +8,9 @@ on:
       - 'cursor/**'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   feature_flags:
     name: feature-flags

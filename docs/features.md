@@ -2,6 +2,18 @@
 
 This repo uses a small feature flag system to enable/disable automation features without editing workflows. Flags live in `.github/template.config.json` under the `features` key.
 
+## How to toggle a feature
+
+Edit `.github/template.config.json`:
+
+```json
+{
+  "features": {
+    "some-feature-id": { "enabled": true }
+  }
+}
+```
+
 ## `ci-lint-format-typecheck`
 
 Adds a fast PR quality gate that runs:
@@ -23,3 +35,12 @@ Edit `.github/template.config.json`:
 ```
 
 Set `"enabled": false` to skip the GitHub Actions `quality` job.
+
+### Run locally
+
+```bash
+npm ci
+npm run lint
+npm run format:check
+npm run typecheck
+```

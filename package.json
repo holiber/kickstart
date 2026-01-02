@@ -17,7 +17,7 @@
     "gh-pages:videos": "node ./scripts/generate-gh-pages-videos.mjs",
     "lint": "eslint .",
     "format": "prettier -w .",
-    "format:check": "prettier -c .",
+    "format:check": "prettier --check .",
     "typecheck": "npm --workspaces run typecheck"
   },
   "devDependencies": {
