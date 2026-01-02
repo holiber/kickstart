@@ -13,7 +13,8 @@
     "build": "npm -w server run build && npm -w ui/web run build",
     "test": "npm -w server run test && npm -w ui/web run test",
     "e2e": "playwright test",
-    "e2e:human": "HUMAN_LIKE=1 playwright test",
+    "e2e:human": "HUMAN_LIKE=1 playwright test --grep \"human-like\"",
+    "gh-pages:videos": "node ./scripts/generate-gh-pages-videos.mjs",
     "lint": "eslint .",
     "format": "prettier -w .",
     "format:check": "prettier -c ."
