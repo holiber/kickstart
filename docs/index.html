@@ -1,50 +1,156 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="min-h-full">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Demo Reports</title>
     <link rel="stylesheet" href="./styles.css" />
+    <script>
+      // Tailwind (CDN) + shadcn-style tokens.
+      // This keeps GH Pages simple (no build step) while still using Tailwind utilities
+      // and the same design language as the app under `ui/web`.
+      window.tailwind = window.tailwind || {};
+      window.tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            borderRadius: {
+              lg: 'var(--radius)',
+              md: 'calc(var(--radius) - 2px)',
+              sm: 'calc(var(--radius) - 4px)',
+            },
+            colors: {
+              background: 'hsl(var(--background))',
+              foreground: 'hsl(var(--foreground))',
+              card: 'hsl(var(--card))',
+              'card-foreground': 'hsl(var(--card-foreground))',
+              popover: 'hsl(var(--popover))',
+              'popover-foreground': 'hsl(var(--popover-foreground))',
+              primary: 'hsl(var(--primary))',
+              'primary-foreground': 'hsl(var(--primary-foreground))',
+              secondary: 'hsl(var(--secondary))',
+              'secondary-foreground': 'hsl(var(--secondary-foreground))',
+              muted: 'hsl(var(--muted))',
+              'muted-foreground': 'hsl(var(--muted-foreground))',
+              accent: 'hsl(var(--accent))',
+              'accent-foreground': 'hsl(var(--accent-foreground))',
+              destructive: 'hsl(var(--destructive))',
+              'destructive-foreground': 'hsl(var(--destructive-foreground))',
+              border: 'hsl(var(--border))',
+              input: 'hsl(var(--input))',
+              ring: 'hsl(var(--ring))',
+            },
+          },
+        },
+      };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body>
-    <header class="header">
-      <div class="title">Demo Reports</div>
-      <div class="subtitle">GH Pages preview for E2E artifacts</div>
+  <body class="min-h-full bg-background text-foreground antialiased">
+    <header class="border-b border-border bg-card/70 backdrop-blur">
+      <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4">
+        <div class="min-w-0">
+          <div class="truncate text-base font-semibold tracking-tight">Demo Reports</div>
+          <div class="truncate text-sm text-muted-foreground">GitHub Pages preview for E2E artifacts</div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <label for="theme" class="sr-only">Theme</label>
+          <select
+            id="theme"
+            class="h-9 rounded-md border border-input bg-background px-3 text-sm shadow-sm outline-none ring-offset-background focus:ring-2 focus:ring-ring"
+            data-testid="theme-select"
+          >
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+      </div>
     </header>
 
-    <main class="container">
-      <nav class="tabs" role="tablist" aria-label="Report tabs">
+    <main class="mx-auto max-w-5xl px-4 py-6">
+      <nav
+        class="inline-flex rounded-lg border border-input bg-card p-1 shadow-sm"
+        role="tablist"
+        aria-label="Report tabs"
+      >
         <button
-          class="tab"
+          class="inline-flex h-9 items-center justify-center rounded-md px-3 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
           type="button"
           role="tab"
           aria-selected="true"
           data-tab="metrics"
+          data-state="active"
           data-testid="tab-metrics"
         >
           Metrics
         </button>
         <button
-          class="tab"
+          class="inline-flex h-9 items-center justify-center rounded-md px-3 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
           type="button"
           role="tab"
           aria-selected="false"
           data-tab="videos"
+          data-state="inactive"
           data-testid="tab-videos"
         >
           Videos
         </button>
       </nav>
 
-      <section class="panel" role="tabpanel" data-panel="metrics" data-testid="panel-metrics">
-        <h2>Project metrics</h2>
-        <p class="todo">TODO: metrics will be added here.</p>
+      <section
+        class="mt-5 rounded-lg border border-border bg-card shadow-sm"
+        role="tabpanel"
+        data-panel="metrics"
+        data-testid="panel-metrics"
+      >
+        <div class="border-b border-border px-4 py-3">
+          <h2 class="text-base font-semibold">Project metrics</h2>
+          <p class="mt-1 text-sm text-muted-foreground">This tab is reserved for future CI/benchmark reports.</p>
+        </div>
+        <div class="px-4 py-4">
+          <div class="rounded-md border border-border bg-background px-3 py-2 text-sm text-muted-foreground">
+            TODO: metrics will be added here.
+          </div>
+        </div>
       </section>
 
-      <section class="panel hidden" role="tabpanel" data-panel="videos" data-testid="panel-videos">
-        <h2>Artifacts videos</h2>
-        <div id="videos" class="videos">
-          <div class="muted">Loading…</div>
+      <section
+        class="mt-5 hidden"
+        role="tabpanel"
+        data-panel="videos"
+        data-testid="panel-videos"
+      >
+        <div class="rounded-lg border border-border bg-card shadow-sm">
+          <div class="flex flex-col gap-3 border-b border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <div class="min-w-0">
+              <h2 class="truncate text-base font-semibold">Artifacts videos</h2>
+              <p id="videosMeta" class="mt-1 text-sm text-muted-foreground">Loading…</p>
+            </div>
+
+            <div class="flex w-full items-center gap-2 sm:w-auto">
+              <label for="videoFilter" class="sr-only">Filter videos</label>
+              <input
+                id="videoFilter"
+                class="h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm outline-none ring-offset-background placeholder:text-muted-foreground focus:ring-2 focus:ring-ring sm:w-72"
+                placeholder="Filter videos…"
+                inputmode="search"
+                autocomplete="off"
+              />
+              <button
+                id="reloadVideos"
+                class="inline-flex h-9 shrink-0 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                type="button"
+              >
+                Reload
+              </button>
+            </div>
+          </div>
+
+          <div id="videos" class="grid gap-4 p-4">
+            <div class="text-sm text-muted-foreground">Loading…</div>
+          </div>
         </div>
       </section>
     </main>
