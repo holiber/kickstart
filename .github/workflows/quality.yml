@@ -1,0 +1,110 @@
+name: quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  feature_flags:
+    name: feature flags
+    runs-on: ubuntu-latest
+    outputs:
+      enabled_ci_lint_format_typecheck: ${{ steps.flags.outputs.enabled_ci_lint_format_typecheck }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node (LTS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Read feature flags
+        id: flags
+        run: node .github/scripts/feature-flags.mjs
+
+  quality:
+    name: quality
+    runs-on: ubuntu-latest
+    needs: feature_flags
+    if: needs.feature_flags.outputs.enabled_ci_lint_format_typecheck == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node (LTS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        id: lint
+        continue-on-error: true
+        run: npm run lint
+
+      - name: Format check
+        id: format
+        continue-on-error: true
+        run: npm run format:check
+
+      - name: Typecheck
+        id: typecheck
+        continue-on-error: true
+        run: npm run typecheck
+
+      - name: Summary
+        if: always()
+        shell: bash
+        run: |
+          mark() {
+            case "$1" in
+              success) echo "✅" ;;
+              failure) echo "❌" ;;
+              *) echo "⚠️" ;;
+            esac
+          }
+
+          LINT_OUTCOME='${{ steps.lint.outcome }}'
+          FORMAT_OUTCOME='${{ steps.format.outcome }}'
+          TYPECHECK_OUTCOME='${{ steps.typecheck.outcome }}'
+
+          {
+            echo "## Quality gates"
+            echo
+            echo "- $(mark "$LINT_OUTCOME") Lint (\`npm run lint\`)"
+            echo "- $(mark "$FORMAT_OUTCOME") Format check (\`npm run format:check\`)"
+            echo "- $(mark "$TYPECHECK_OUTCOME") Typecheck (\`npm run typecheck\`)"
+            echo
+            echo "### Run locally"
+            echo "\`\`\`bash"
+            echo "npm ci"
+            echo "npm run lint"
+            echo "npm run format:check"
+            echo "npm run typecheck"
+            echo "\`\`\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail if any gate failed
+        if: always()
+        shell: bash
+        run: |
+          outcomes=(
+            '${{ steps.lint.outcome }}'
+            '${{ steps.format.outcome }}'
+            '${{ steps.typecheck.outcome }}'
+          )
+
+          for o in "${outcomes[@]}"; do
+            if [ "$o" != "success" ]; then
+              echo "One or more quality gates failed."
+              exit 1
+            fi
+          done
