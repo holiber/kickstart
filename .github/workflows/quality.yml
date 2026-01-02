@@ -2,6 +2,10 @@ name: quality
 
 on:
   pull_request:
+  push:
+    branches:
+      - main
+      - 'cursor/**'
   workflow_dispatch:
 
 jobs:
