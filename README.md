@@ -1,3 +1,5 @@
+<img width="1080" height="720" alt="image" src="https://github.com/user-attachments/assets/13a79d61-32b5-4800-a3d4-15552c4f4e4b" />
+
 # The Kikstart template 🚀
 
 The purpose of this project is to provide super a template with super comperhansive UI with free tools and without sharing your (maby private) code with third parties except github 🕵️
