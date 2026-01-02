@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demo Reports</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="title">Demo Reports</div>
+      <div class="subtitle">GH Pages preview for E2E artifacts</div>
+    </header>
+
+    <main class="container">
+      <nav class="tabs" role="tablist" aria-label="Report tabs">
+        <button
+          class="tab"
+          type="button"
+          role="tab"
+          aria-selected="true"
+          data-tab="metrics"
+          data-testid="tab-metrics"
+        >
+          Metrics
+        </button>
+        <button
+          class="tab"
+          type="button"
+          role="tab"
+          aria-selected="false"
+          data-tab="videos"
+          data-testid="tab-videos"
+        >
+          Videos
+        </button>
+      </nav>
+
+      <section class="panel" role="tabpanel" data-panel="metrics" data-testid="panel-metrics">
+        <h2>Project metrics</h2>
+        <p class="todo">TODO: metrics will be added here.</p>
+      </section>
+
+      <section class="panel hidden" role="tabpanel" data-panel="videos" data-testid="panel-videos">
+        <h2>Artifacts videos</h2>
+        <div id="videos" class="videos">
+          <div class="muted">Loading…</div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
