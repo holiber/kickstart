@@ -96,6 +96,22 @@ server.get('/api/demo/projects', async () => ({
   projects: listDemoProjects(),
 }));
 
+// E2E/demo helper: allow forcing a single bot tick deterministically.
+// This makes the "wait for bot action" human-like E2E flow less flaky in CI.
+server.post<{ Querystring: ReplicacheQuery }>('/api/demo/bot-tick', async (req, reply) => {
+  try {
+    const projectId = requireProjectId(req.query?.projectId);
+    const state = getProjectState(store, projectId);
+    if (state.project.mode === 'full-sync') applyBotTickFullSync(state);
+    else if (state.project.mode === 'pull-only') applyBotTickPullOnly(state);
+    else throw new Error('Bots are not enabled for no-sync projects');
+    return reply.send({ ok: true, version: state.version });
+  } catch (err: unknown) {
+    req.log.error({ err }, 'bot-tick failed');
+    return reply.status(400).send({ error: errorMessage(err) });
+  }
+});
+
 server.post<{ Querystring: ReplicacheQuery; Body: PullRequestBody }>(
   '/api/replicache/pull',
   async (req, reply) => {

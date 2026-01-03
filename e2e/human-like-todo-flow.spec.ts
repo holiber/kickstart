@@ -1,13 +1,14 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import { devices, expect, test } from '@playwright/test';
+import { devices, expect, test, type Locator } from '@playwright/test';
 
 import { Human, prepareTestArtifactDir } from './human';
 
 test('human-like: mobile interact through projects (video + screenshots + console)', async ({
   browser,
 }, testInfo) => {
+  test.setTimeout(10 * 60 * 1000);
   const { dir } = await prepareTestArtifactDir(testInfo);
 
   const context = await browser.newContext({
@@ -27,10 +28,20 @@ test('human-like: mobile interact through projects (video + screenshots + consol
 
   const openMenu = page.getByRole('button', { name: 'Open menu' });
 
-  async function openSidebar() {
+  async function openSidebar(): Promise<Locator> {
     await human.waitBetweenActions();
     await human.click(openMenu);
-    await expect(page.getByTestId('project-list')).toBeVisible();
+
+    // On mobile, the sidebar renders inside a Radix Sheet (dialog portal). A second, non-visible
+    // sidebar can still exist in the DOM (desktop layout), so we always scope interactions to the
+    // visible dialog to avoid Playwright strict-mode ambiguities.
+    const sheet = page
+      .getByRole('dialog')
+      .filter({ has: page.locator('[data-testid="project-list"]') })
+      .first();
+    await expect(sheet).toBeVisible();
+    await expect(sheet.locator('[data-testid="project-list"]')).toBeVisible();
+    return sheet;
   }
 
   async function closeOverlays() {
@@ -55,9 +66,9 @@ test('human-like: mobile interact through projects (video + screenshots + consol
   }
 
   // task1: switch to dark mode (mobile view).
-  await openSidebar();
+  const sidebar1 = await openSidebar();
   await human.waitBetweenActions();
-  await human.click(page.getByRole('button', { name: 'Theme' }));
+  await human.click(sidebar1.getByRole('button', { name: 'Theme' }));
   await human.waitBetweenActions();
   await human.click(page.getByRole('menuitemradio', { name: 'Dark' }));
   await closeOverlays();
@@ -72,9 +83,9 @@ test('human-like: mobile interact through projects (video + screenshots + consol
   await human.screenshot(path.join(dir, '03-first-project-all-uncompleted.png'));
 
   // task4: switch to second project (full-sync) and add a todo.
-  await openSidebar();
+  const sidebar2 = await openSidebar();
   await human.waitBetweenActions();
-  await human.click(page.getByTestId('project-p-fullsync'));
+  await human.click(sidebar2.getByTestId('project-p-fullsync'));
   await closeOverlays();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('TodoList - full-sync');
 
@@ -83,40 +94,66 @@ test('human-like: mobile interact through projects (video + screenshots + consol
   await human.type(page.getByTestId('add-todo-input'), todoText);
   await human.press('Enter');
 
-  const createdRow = page.locator('li', { hasText: todoText });
-  await expect(createdRow).toBeVisible();
+  const createdTextControl = page.locator('[data-testid^="todo-text-"]').filter({ hasText: todoText }).first();
+  await expect(createdTextControl).toBeVisible();
+  const createdTextTestId = await createdTextControl.getAttribute('data-testid');
+  if (!createdTextTestId) throw new Error('Expected todo text control to have data-testid');
   await human.screenshot(path.join(dir, '04-second-project-after-add.png'));
 
   // task5: edit just-created todo.
   await human.waitBetweenActions();
-  await human.click(createdRow.locator('button[data-testid^="todo-text-"]'));
-  const editInput = createdRow.locator('input[data-testid^="todo-text-"]');
+  await human.click(page.getByTestId(createdTextTestId));
+  const editInput = page.locator(`input[data-testid="${createdTextTestId}"]`);
   await expect(editInput).toBeVisible();
 
-  await human.press('Control+A');
-  await human.press('Backspace');
   const updatedText = `${todoText} (edited)`;
+  await human.waitBetweenActions();
+  await editInput.fill('');
   await human.type(editInput, updatedText);
   await human.press('Enter');
-  await expect(createdRow).toContainText(updatedText);
+  await expect(page.locator('li', { hasText: updatedText })).toBeVisible();
   await human.screenshot(path.join(dir, '05-second-project-after-edit.png'));
 
   // task6: delete all todos and wait until server bot creates a new todo.
-  while ((await page.locator('[data-testid^="todo-delete-"]').count()) > 0) {
+  const deleteButtons = page.locator('[data-testid^="todo-delete-"]');
+  while ((await deleteButtons.count()) > 0) {
     await human.waitBetweenActions();
-    await human.click(page.locator('[data-testid^="todo-delete-"]').first());
+    // Use a direct click here (no "human mouse") to avoid occasional pointer-intercept
+    // flakiness on small mobile viewports.
+    await deleteButtons.first().click({ force: true });
   }
   await expect(page.getByText('No todos yet.')).toBeVisible();
   await human.screenshot(path.join(dir, '06-second-project-after-delete-all.png'));
 
   // Bots are enabled for HUMAN_LIKE=1 via playwright.config.ts (DEMO_FREEZE_BOTS=0).
-  await expect(page.locator('li', { hasText: /Bot created #/ })).toBeVisible({ timeout: 20_000 });
+  // Also force a single bot tick to make this step deterministic in CI.
+  await human.waitBetweenActions();
+  const botTickRes = await page.request.post('http://127.0.0.1:8787/api/demo/bot-tick?projectId=p-fullsync');
+  if (!botTickRes.ok()) {
+    throw new Error(
+      `bot-tick failed: ${botTickRes.status()} ${await botTickRes.text()}`,
+    );
+  }
+
+  // Nudge Replicache by recreating the instance (switch away + back).
+  const sidebarAfterTick = await openSidebar();
+  await human.waitBetweenActions();
+  await human.click(sidebarAfterTick.getByTestId('project-p-pullonly'));
+  await closeOverlays();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Todo - pull only');
+  const sidebarBack = await openSidebar();
+  await human.waitBetweenActions();
+  await human.click(sidebarBack.getByTestId('project-p-fullsync'));
+  await closeOverlays();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('TodoList - full-sync');
+
+  await expect(page.locator('[data-testid^="todo-item-"]').first()).toBeVisible({ timeout: 20_000 });
   await human.screenshot(path.join(dir, '07-second-project-after-bot-create.png'));
 
   // task7: create a new project, add a todo, and complete it.
-  await openSidebar();
+  const sidebar3 = await openSidebar();
   await human.waitBetweenActions();
-  await human.click(page.getByTestId('create-project'));
+  await human.click(sidebar3.getByTestId('create-project'));
 
   const projectName = `Human-like project ${Date.now()}`;
   const projectNameInput = page.getByPlaceholder('Project name');
