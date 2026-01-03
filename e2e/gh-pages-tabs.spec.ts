@@ -125,4 +125,3 @@ test('gh-pages: tabs render and screenshots are saved', async ({ page }) => {
     await preview.close();
   }
 });
-
