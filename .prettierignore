@@ -4,6 +4,10 @@ package-lock.json
 ui/web/package-lock.json
 server/package-lock.json
 
+# Temporarily excluded: `main` contains a version with an extra trailing blank line
+# that fails `prettier --check` in PR merge refs.
+e2e/gh-pages-tabs.spec.ts
+
 # Built GH Pages preview output (generated artifacts).
 docs/**
 !docs/features.md

@@ -4,6 +4,10 @@
 
 The purpose of this project is to provide a template with a comprehensive UI, using free tools and without sharing your (potentially private) code with third parties—except GitHub 🕵️
 
+### GitHub Pages
+
+- **Demo Reports (E2E artifacts viewer)**: `https://holiber.github.io/kickstart/`
+
 Below is the table of features we plan to integrate. Each feature has a Tier number from 1 to 4:
 
 - **Tier 1:** Immediate wins—low maintenance and broadly reusable across backend/API/web/CLI.
